@@ -1,5 +1,5 @@
 
-# Equiractangular 360° Image Viewer
+# Equirectangular 360° Image Viewer
 
 Based on [@fuenwang](https://github.com/fuenwang) [Equirec2perspec](https://github.com/fuenwang/Equirec2Perspec)
 
