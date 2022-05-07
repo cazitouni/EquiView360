@@ -3,7 +3,7 @@
 
 Based on [@fuenwang](https://github.com/fuenwang) [Equirec2perspec](https://github.com/fuenwang/Equirec2Perspec)
 
-This project is a simple python 360° Imageviewer for Equirectangular photography and pictures.
+This project is a simple python 360° Image viewer for Equirectangular photography and pictures.
 
 There is still a lot of room for improvment performance wise.
 
