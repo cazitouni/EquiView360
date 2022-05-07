@@ -1,3 +1,6 @@
+import os
+import sys
+
 from PyQt5 import QtGui
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
@@ -6,8 +9,7 @@ from PyQt5 import QtCore
 import Equirec2Perspec as E2P 
 import cv2
 
-import sys
-from PyQt5.QtGui import QPixmap
+os.environ.pop("QT_QPA_PLATFORM_PLUGIN_PATH")
 
 class Window(QDialog):
     def __init__(self):
