@@ -31,7 +31,7 @@ class Window(QDialog):
         self.equ = E2P.Equirectangular(self.imgPath)
         self.width = 1080
         self.height = 720
-        self.setFixedSize(1080, 720)
+        self.setFixedSize(self.width, self.height)
         self.InitWindow()
 
     # Create the windows
@@ -55,8 +55,8 @@ class Window(QDialog):
 
     # Image creation photo to get the correct perspective
     def img(self, fov, tet, fi) :
-        img = self.equ.GetPerspective(fov, tet, fi, 720, 1080)
-        qimg = QtGui.QImage(img.data, 1080, 720, 3240, QtGui.QImage.Format_BGR888)
+        img = self.equ.GetPerspective(fov, tet, fi, self.height, self.width)
+        qimg = QtGui.QImage(img.data, self.width, self.height, self.width * 3, QtGui.QImage.Format_BGR888)
         return qimg
 
     # Key movement 
