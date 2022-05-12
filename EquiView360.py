@@ -4,12 +4,17 @@ import sys
 from PyQt5 import QtGui
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-from PyQt5.QtWidgets import QApplication, QDialog, QVBoxLayout, QLabel
+from PyQt5.QtWidgets import QApplication, QDialog, QLabel
 from PyQt5 import QtCore
 import Equirec2Perspec as E2P 
 import cv2
+import platform 
 
-os.environ.pop("QT_QPA_PLATFORM_PLUGIN_PATH")
+if platform.system() == 'Windows':
+    pass
+else :
+    os.environ.pop("QT_QPA_PLATFORM_PLUGIN_PATH")
+
 
 class Window(QDialog):
     def __init__(self):
