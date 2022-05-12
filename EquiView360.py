@@ -10,93 +10,87 @@ import Equirec2Perspec as E2P
 import cv2
 import platform 
 
-if platform.system() == 'Windows':
-    pass
-else :
+# Linux systems need this env var
+if platform.system() == 'Linux':
     os.environ.pop("QT_QPA_PLATFORM_PLUGIN_PATH")
+else :
+    pass
 
-
+# Main windows
 class Window(QDialog):
     def __init__(self):
+
+        # Initialisation of the vars
         super().__init__()
         self.title = "Equirectangular 360° Viewer"
         self.posh = 0
         self.posw = 0
         self.save = QPoint(0,0)
-        self.endpoint = QPoint(0,0)
         self.fov = 100
         self.imgPath = cv2.imread('example.jpg', cv2.IMREAD_COLOR)
+        self.equ = E2P.Equirectangular(self.imgPath)
         self.width = 1080
         self.height = 720
         self.setFixedSize(1080, 720)
         self.InitWindow()
 
+    # Create the windows
     def InitWindow(self):
+
+        # Setting icon title and geometry
         self.setWindowIcon(QtGui.QIcon("icon.png"))
         self.setWindowTitle(self.title)
-        self.setStyleSheet("background-color:#202020")
         self.setGeometry(0, 0, self.width, self.height)
 
+        # Centering the windows
         qtRectangle = self.frameGeometry()
         centerPoint = QDesktopWidget().availableGeometry().center()
         qtRectangle.moveCenter(centerPoint)
         self.move(qtRectangle.topLeft())
 
+        # Setting the image into the windows
         self.labelImage = QLabel(self)
-        pixmap = QPixmap(self.img(self.imgPath, self.fov, self.posw, self.posh))
-        self.labelImage.setPixmap(pixmap)
+        self.labelImage.setPixmap(QPixmap(self.img(self.fov, self.posw, self.posh)))
         self.show()
 
-    def img(self, path, fov, tet, fi) :
-        equ = E2P.Equirectangular(path)
-        img = equ.GetPerspective(fov, tet, fi, 720, 1080)
-        height, width, channel= img.shape
-        bytesPerLine = 3 * width
-        qimg = QtGui.QImage(img.data, width, height, bytesPerLine, QtGui.QImage.Format_BGR888)
+    # Image creation photo to get the correct perspective
+    def img(self, fov, tet, fi) :
+        img = self.equ.GetPerspective(fov, tet, fi, 720, 1080)
+        qimg = QtGui.QImage(img.data, 1080, 720, 3240, QtGui.QImage.Format_BGR888)
         return qimg
 
+    # Key movement 
     def keyPressEvent(self, event):
-
         if event.key() == QtCore.Qt.Key_Down:
-            self.posh = self.posh -30
-            pixmap = QPixmap(self.img(self.imgPath, self.fov, self.posw, self.posh))
-            self.labelImage.setPixmap(pixmap)
-        event.accept()
-
+            self.posh -= 30
+            self.labelImage.setPixmap(QPixmap(self.img( self.fov, self.posw, self.posh)))
         if event.key() == QtCore.Qt.Key_Up:
-            self.posh = self.posh  + 30
-            pixmap = QPixmap(self.img(self.imgPath, self.fov, self.posw, self.posh))
-            self.labelImage.setPixmap(pixmap)
-        event.accept()
+            self.posh  += 30
+            self.labelImage.setPixmap(QPixmap(self.img( self.fov, self.posw, self.posh)))
         if event.key() == QtCore.Qt.Key_Left:
-            self.posw = self.posw  - 30
-            pixmap = QPixmap(self.img(self.imgPath, self.fov, self.posw, self.posh))
-            self.labelImage.setPixmap(pixmap)
-        event.accept()
+            self.posw  -= 30
+            self.labelImage.setPixmap(QPixmap(self.img(self.fov, self.posw, self.posh)))
         if event.key() == QtCore.Qt.Key_Right:
-            self.posw = self.posw  + 30
-            pixmap = QPixmap(self.img(self.imgPath, self.fov, self.posw, self.posh))
-            self.labelImage.setPixmap(pixmap)
-        event.accept()
+            self.posw  += 30
+            self.labelImage.setPixmap(QPixmap(self.img(self.fov, self.posw, self.posh)))
 
+    # Mouse press event for the mouse movement function
     def mousePressEvent(self, event):
         if event.button() == QtCore.Qt.LeftButton:
             self.mousePos = event.pos()
 
+    # Mouse movement function - Generate the correct perspective on each mouse moves
     def mouseMoveEvent(self, event):
-
         if event.buttons() != QtCore.Qt.LeftButton:
             return
+        self.delta =  (self.mousePos - event.pos()) + self.save
+        self.labelImage.setPixmap(QPixmap(self.img(self.fov, (self.delta.x() / 10 + self.posh), (-self.delta.y() / 10 + self.posw))))
 
-        self.delta =  self.mousePos - event.pos()
-        self.delta = self.delta + self.save
-        pixmap = QPixmap(self.img(self.imgPath, self.fov, (self.delta.x() / 10 + self.posh), (-self.delta.y() / 10 + self.posw)))
-        self.labelImage.setPixmap(pixmap)
-
+    # Update the cursor position on mouse release
     def mouseReleaseEvent(self, event):
-
         self.save = self.delta
 
+# Launch the application
 if __name__ =='__main__':
     app = QApplication(sys.argv)
     w = Window()
