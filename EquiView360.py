@@ -4,7 +4,7 @@ import sys
 from PyQt5 import QtGui
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-from PyQt5.QtWidgets import QApplication, QDialog, QLabel
+from PyQt5.QtWidgets import QApplication, QDialog, QLabel, QDesktopWidget
 from PyQt5 import QtCore
 import Equirec2Perspec as E2P 
 import cv2
@@ -20,8 +20,6 @@ class Window(QDialog):
     def __init__(self):
         super().__init__()
         self.title = "Equirectangular 360° Viewer"
-        self.top = 200
-        self.left = 500
         self.posh = 0
         self.posw = 0
         self.save = QPoint(0,0)
@@ -37,7 +35,13 @@ class Window(QDialog):
         self.setWindowIcon(QtGui.QIcon("icon.png"))
         self.setWindowTitle(self.title)
         self.setStyleSheet("background-color:#202020")
-        self.setGeometry(self.left, self.top, self.width, self.height)
+        self.setGeometry(0, 0, self.width, self.height)
+
+        qtRectangle = self.frameGeometry()
+        centerPoint = QDesktopWidget().availableGeometry().center()
+        qtRectangle.moveCenter(centerPoint)
+        self.move(qtRectangle.topLeft())
+
         self.labelImage = QLabel(self)
         pixmap = QPixmap(self.img(self.imgPath, self.fov, self.posw, self.posh))
         self.labelImage.setPixmap(pixmap)
